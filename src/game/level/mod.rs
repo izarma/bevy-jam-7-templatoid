@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 pub struct LevelAssets {
     #[dependency]
     music: Handle<AudioSource>,
+    #[dependency]
     tiled_map: Handle<TiledMapAsset>,
 }
 
