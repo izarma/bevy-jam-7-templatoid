@@ -14,8 +14,10 @@
 //! consider using a [fixed timestep](https://github.com/bevyengine/bevy/blob/main/examples/movement/physics_in_fixed_timestep.rs).
 
 use bevy::{prelude::*, window::PrimaryWindow};
-
-use crate::{AppSystems, PausableSystems};
+use avian2d::prelude::*;
+use crate::{
+    AppSystems, PausableSystems,
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
@@ -45,19 +47,18 @@ impl Default for MovementController {
     fn default() -> Self {
         Self {
             intent: Vec2::ZERO,
-            // 400 pixels per second is a nice default, but we can still vary this per character.
-            max_speed: 400.0,
+            max_speed: 1.0,
         }
     }
 }
 
 fn apply_movement(
-    time: Res<Time>,
-    mut movement_query: Query<(&MovementController, &mut Transform)>,
+    mut movement_query: Query<(&MovementController, &mut LinearVelocity,)>,
 ) {
-    for (controller, mut transform) in &mut movement_query {
-        let velocity = controller.max_speed * controller.intent;
-        transform.translation += velocity.extend(0.0) * time.delta_secs();
+    for (controller, mut rb_vel) in movement_query.iter_mut() {
+        rb_vel.0 = controller.max_speed * controller.intent; // normal
+        //rb_vel.0 = Vec2::new(0.25, 0.); // normal
+        
     }
 }
 

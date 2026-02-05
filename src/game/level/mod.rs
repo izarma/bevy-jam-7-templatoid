@@ -14,8 +14,8 @@ use crate::{
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>()
-        .add_systems(Startup, startup)    
-        .add_systems(Update, move_player);
+        .add_systems(Startup, startup);
+        //.add_systems(Update, move_player);
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]
@@ -50,7 +50,7 @@ pub fn spawn_level(
         Visibility::default(),
         DespawnOnExit(Screen::Gameplay),
         children![
-            player(400.0, &player_assets, &mut texture_atlas_layouts),
+            player(75.0, &player_assets, &mut texture_atlas_layouts),
             (
                 Name::new("Gameplay Music"),
                 music(level_assets.music.clone())
@@ -65,17 +65,6 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
             TiledMap(asset_server.load("maps/map_tile-16x16.tmx")),
             TilemapAnchor::Center,
         ))
-        // Wait for map loading to complete and spawn a simple player-controlled object
-        .observe(|_: On<TiledEvent<MapCreated>>, mut commands: Commands| {
-            commands.spawn((
-                RigidBody::Dynamic,
-                PlayerMarker,
-                Name::new("PlayerControlledObject (Avian2D physics)"),
-                Collider::circle(10.),
-                GravityScale(GRAVITY_SCALE),
-                Transform::from_xyz(50., -50., 0.),
-            ));
-        })
         // Automatically insert a `RigidBody::Static` component on all the map entities
         .observe(
             |collider_created: On<TiledEvent<ColliderCreated>>, mut commands: Commands| {
@@ -87,8 +76,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 
-pub const MOVE_SPEED: f32 = 200.;
-pub const GRAVITY_SCALE: f32 = 10.0;
+
 
 
 // A 'player' marker component
@@ -96,6 +84,9 @@ pub const GRAVITY_SCALE: f32 = 10.0;
 pub struct PlayerMarker;
 
 // A simplistic controller
+/* 
+
+pub const MOVE_SPEED: f32 = 200.;
 fn move_player(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut player: Query<&mut LinearVelocity, With<PlayerMarker>>,
@@ -126,7 +117,7 @@ fn move_player(
         rb_vel.0 = direction * MOVE_SPEED;
     }
 }
-
+*/
 /*
 #[derive(Default)]
 struct HelperPlugin;

@@ -13,7 +13,6 @@ use crate::{
     game::{
         level::{
             PlayerMarker,
-            GRAVITY_SCALE,
         },
         animation::PlayerAnimation,
         movement::{MovementController, ScreenWrap},
@@ -24,6 +23,7 @@ pub(super) fn plugin(app: &mut App) {
     app.load_resource::<PlayerAssets>();
 
     // Record directional input as movement controls.
+
     app.add_systems(
         Update,
         record_player_directional_input
@@ -54,13 +54,17 @@ pub fn player(
                 index: player_animation.get_atlas_index(),
             },
         ),
-        //Transform::from_scale(Vec2::splat(8.0).extend(1.0)),
         MovementController {
             max_speed,
             ..default()
         },
         ScreenWrap,
-        player_animation,    
+        player_animation,
+        RigidBody::Dynamic,
+        PlayerMarker,
+        Collider::circle(12.),
+        LockedAxes::new().lock_rotation(),
+        Transform::from_xyz(0., 0., 0.),
     )
 }
 
@@ -74,16 +78,16 @@ fn record_player_directional_input(
 ) {
     // Collect directional input.
     let mut intent = Vec2::ZERO;
-    if input.pressed(KeyCode::KeyW) || input.pressed(KeyCode::ArrowUp) {
+    if input.pressed(KeyCode::KeyW) {
         intent.y += 1.0;
     }
-    if input.pressed(KeyCode::KeyS) || input.pressed(KeyCode::ArrowDown) {
+    if input.pressed(KeyCode::KeyS) {
         intent.y -= 1.0;
     }
-    if input.pressed(KeyCode::KeyA) || input.pressed(KeyCode::ArrowLeft) {
+    if input.pressed(KeyCode::KeyA) {
         intent.x -= 1.0;
     }
-    if input.pressed(KeyCode::KeyD) || input.pressed(KeyCode::ArrowRight) {
+    if input.pressed(KeyCode::KeyD) {
         intent.x += 1.0;
     }
 
