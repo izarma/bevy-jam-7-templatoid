@@ -1,26 +1,31 @@
 use avian2d::prelude::*;
 use bevy::prelude::*;
-use bevy_ecs_tiled::prelude::*;
 
 use crate::{
     asset_tracking::LoadResource,
     audio::music,
     game::player::{PlayerAssets, player},
     screens::Screen,
+    utils::tiled,
 };
+
+
+
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
+    app.add_systems(Startup, startup);
     //.add_systems(Update, move_player);
 }
+
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
 pub struct LevelAssets {
     #[dependency]
     music: Handle<AudioSource>,
-    #[dependency]
-    tiled_map: Handle<TiledMapAsset>,
+    //#[dependency]
+    //tiled_map: Handle<TiledMapAsset>,
 }
 
 impl FromWorld for LevelAssets {
@@ -28,10 +33,21 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
         Self {
             music: assets.load("audio/music/Fluffing A Duck.ogg"),
-            tiled_map: assets.load("maps/map_tile-16x16.tmx"),
         }
     }
 }
+
+fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let map_handle = tiled::TiledMapHandle(
+        asset_server.load("map_tile-16x16.tmx")
+    );
+
+    commands.spawn(tiled::TiledMapBundle {
+        tiled_map: map_handle,
+        ..Default::default()
+    });
+}
+
 
 /// A system that spawns the main level.
 pub fn spawn_level(
@@ -40,32 +56,19 @@ pub fn spawn_level(
     player_assets: Res<PlayerAssets>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    commands
-        .spawn((
-            Name::new("Level"),
-            Transform::default(),
-            Visibility::default(),
-            DespawnOnExit(Screen::Gameplay),
-            children![
-                player(75.0, &player_assets, &mut texture_atlas_layouts),
-                (
-                    Name::new("Gameplay Music"),
-                    music(level_assets.music.clone()),
-                ),
-                (
-                    Name::new("Tiled Level"),
-                    TiledMap(level_assets.tiled_map.clone()),
-                    TilemapAnchor::Center,
-                ),
-            ],
-        ))
-        .observe(
-            |collider_created: On<TiledEvent<ColliderCreated>>, mut commands: Commands| {
-                commands
-                    .entity(collider_created.event().origin)
-                    .insert(RigidBody::Static);
-            },
-        );
+    commands.spawn((
+        Name::new("Level"),
+        Transform::default(),
+        Visibility::default(),
+        DespawnOnExit(Screen::Gameplay),
+        children![
+            player(100.0, &player_assets, &mut texture_atlas_layouts),
+            (
+                Name::new("Gameplay Music"),
+                music(level_assets.music.clone())
+            )
+        ],
+    ));
 }
 
 // A 'player' marker component

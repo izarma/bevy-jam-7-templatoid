@@ -64,7 +64,7 @@ pub fn player(
         PlayerMarker,
         Collider::circle(12.),
         LockedAxes::new().lock_rotation(),
-        Transform::from_xyz(0., 0., 0.),
+        Transform::from_xyz(0., 0., 100.),
     )
 }
 
