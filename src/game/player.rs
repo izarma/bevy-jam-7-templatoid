@@ -1,5 +1,3 @@
-//! Player-specific behavior.
-
 use bevy::{
     image::{ImageLoaderSettings, ImageSampler},
     prelude::*,
@@ -18,6 +16,8 @@ use crate::{
         movement::{MovementController, ScreenWrap},
     },
 };
+
+pub const PLAYER_Z_TRANSLATION: f32 = 100.;
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<PlayerAssets>();
@@ -60,11 +60,13 @@ pub fn player(
         },
         ScreenWrap,
         player_animation,
-        RigidBody::Dynamic,
         PlayerMarker,
-        Collider::circle(12.),
         LockedAxes::new().lock_rotation(),
-        Transform::from_xyz(0., 0., 100.),
+        Transform::from_xyz(0., 0., PLAYER_Z_TRANSLATION),
+        // TODO: kinematic (usually you end up)
+        RigidBody::Dynamic,
+        GravityScale(0.0),
+        Collider::circle(12.),
     )
 }
 

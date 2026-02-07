@@ -17,48 +17,36 @@ use std::io::Cursor;
 use std::path::Path;
 use std::sync::Arc;
 
-use bevy::log::{info, warn};
-use bevy::math::Vec2;
 use bevy::{
     asset::{
         AssetLoader,
         io::Reader,
     },
+    log::{info, warn},
     platform::collections::HashMap,
     prelude::{
         App, Vec3,
         Added, Asset, AssetApp, AssetEvent, AssetId, Assets, Bundle, Commands, Component, Entity,
-        GlobalTransform, Handle, Image, MessageReader, Plugin, Query, Res, Transform, Update,
+        GlobalTransform, Handle, Image, MessageReader, Query, Res, Transform, Update,
     },
     reflect::TypePath,
 };
-use avian2d::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
-
+use avian2d::prelude::*;
+use thiserror::Error;
 use tiled::{
     ObjectShape,
 };
-use thiserror::Error;
 
+use crate::{
+    game::player::PLAYER_Z_TRANSLATION,
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_asset::<TiledMap>()
         .register_asset_loader(TiledLoader)
         .add_systems(Update, process_loaded_maps);
 }
-
-/*
-#[derive(Default)]
-pub struct TiledMapPlugin;
-
-impl Plugin for TiledMapPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
-        app.init_asset::<TiledMap>()
-            .register_asset_loader(TiledLoader)
-            .add_systems(Update, process_loaded_maps);
-    }
-}
-*/
 
 #[derive(TypePath, Asset)]
 pub struct TiledMap {
@@ -72,17 +60,14 @@ pub struct TiledMap {
 }
 
 // Stores a list of tiled layers.
-#[allow(dead_code)]
 #[derive(Component, Default)]
 pub struct TiledLayersStorage {
     pub storage: HashMap<u32, Entity>,
 }
 
-#[allow(dead_code)]
 #[derive(Component, Default)]
 pub struct TiledMapHandle(pub Handle<TiledMap>);
 
-#[allow(dead_code)]
 #[derive(Default, Bundle)]
 pub struct TiledMapBundle {
     pub tiled_map: TiledMapHandle,
@@ -92,12 +77,10 @@ pub struct TiledMapBundle {
     pub render_settings: TilemapRenderSettings,
 }
 
-#[allow(dead_code)]
 struct BytesResourceReader {
     bytes: Arc<[u8]>,
 }
 
-#[allow(dead_code)]
 impl BytesResourceReader {
     fn new(bytes: &[u8]) -> Self {
         Self {
@@ -116,7 +99,6 @@ impl tiled::ResourceReader for BytesResourceReader {
     }
 }
 
-#[allow(dead_code)]
 #[derive(TypePath)]
 pub struct TiledLoader;
 
@@ -445,7 +427,7 @@ fn process_loaded_maps(
                                         commands.entity(tile_entity).insert((
                                             Transform::from_translation(
                                                 Vec3::new(-1.* (tile_width * tiled_map.map.width) as f32/2.0, -1. * (tile_height * tiled_map.map.height) as f32/2.0, 0.) +
-                                                Vec3::new(half_tile_width + (tile_width * x) as f32, half_tile_height + (tile_height * y) as f32 , 0.0),
+                                                Vec3::new(half_tile_width + (tile_width * x) as f32, half_tile_height + (tile_height * y) as f32 , PLAYER_Z_TRANSLATION),
                                             ),
                                             RigidBody::Static,
                                             Collider::rectangle(width, height),
