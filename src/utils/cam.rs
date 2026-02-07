@@ -1,8 +1,6 @@
-use core::f32::*;
-
-use bevy::{ 
+use bevy::{
     prelude::*,
-    camera::*,    
+    camera::*,
 };
 
 use crate::{
