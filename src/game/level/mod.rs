@@ -1,4 +1,7 @@
+pub mod projectiles;
+
 use avian2d::prelude::{Physics, PhysicsTime};
+
 use bevy::prelude::*;
 
 use crate::{
@@ -10,6 +13,9 @@ use crate::{
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
+    app.add_plugins((
+        projectiles::plugin,
+    ));
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]

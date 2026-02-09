@@ -19,4 +19,7 @@ pub(super) fn plugin(app: &mut App) {
     ));
 }
 
-
+/// [`Player`], [`Mob`], [`Projectile`], [`Source`] or any permutation of them.
+pub trait Thrower {
+    fn throw(commands: &mut Commands, /* TODO: some more */);
+}
