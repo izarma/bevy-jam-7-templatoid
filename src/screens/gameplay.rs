@@ -38,7 +38,7 @@ pub(super) fn plugin(app: &mut App) {
         (
             // Top-level game loop
             (check_boss_and_player).run_if(
-                in_state(Screen::Gameplay)
+                in_state(Screen::Gameplay).and(in_state(Menu::None))
             ),
             // Toggle pause on key press.
             (pause, spawn_pause_overlay, open_pause_menu).run_if(
@@ -78,8 +78,9 @@ fn check_boss_and_player(
                 time.pause();
                 let lev = current_level.get();
                 if lev.is_last() {
-                    // End game
                     next_menu.set(Menu::Credits);
+                    // End game
+                    next_screen.set(Screen::Title);
                 } else {
                     next_level.set(lev.next());
                     next_screen.set(Screen::Loading);
