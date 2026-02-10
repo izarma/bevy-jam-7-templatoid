@@ -102,13 +102,16 @@ pub fn spawn_level(
     anim_assets: Res<AnimationAssets>,
     mut time: ResMut<Time<Physics>>,
 ) {
+    let lev_entity = commands.spawn((
+        Name::new("Level"),
+        Transform::default(),
+        Visibility::default(),
+        DespawnOnExit(Screen::Gameplay),
+    )).id();
+    use Level::*;
     match current_level.get() {
-        Level::Foo => {
-            commands.spawn((
-                Name::new("Level"),
-                Transform::default(),
-                Visibility::default(),
-                DespawnOnExit(Screen::Gameplay),
+        Foo => {
+            commands.entity(lev_entity).insert((
                 children![
                     player(100.0, &anim_assets),
                     basic_enemy((-70., 20.).into(), &anim_assets),
@@ -121,12 +124,8 @@ pub fn spawn_level(
                 ],
             ));
         }
-        Level::Bar => {
-            commands.spawn((
-                Name::new("Level"),
-                Transform::default(),
-                Visibility::default(),
-                DespawnOnExit(Screen::Gameplay),
+        Bar => {
+            commands.entity(lev_entity).insert((
                 children![
                     player(100.0, &anim_assets),
                     basic_enemy((-70., 20.).into(), &anim_assets),
@@ -139,12 +138,8 @@ pub fn spawn_level(
                 ],
             ));
         }
-        Level::Baz => {
-            commands.spawn((
-                Name::new("Level"),
-                Transform::default(),
-                Visibility::default(),
-                DespawnOnExit(Screen::Gameplay),
+        Baz => {
+            commands.entity(lev_entity).insert((
                 children![
                     player(100.0, &anim_assets),
                     basic_enemy((-70., 20.).into(), &anim_assets),
@@ -157,12 +152,8 @@ pub fn spawn_level(
                 ],
             ));
         }
-        Level::Qux => {
-            commands.spawn((
-                Name::new("Level"),
-                Transform::default(),
-                Visibility::default(),
-                DespawnOnExit(Screen::Gameplay),
+        Qux => {
+            commands.entity(lev_entity).insert((
                 children![
                     player(100.0, &anim_assets),
                     basic_enemy((-70., 20.).into(), &anim_assets),
@@ -175,12 +166,8 @@ pub fn spawn_level(
                 ],
             ));
         }
-        Level::Quux => {
-            commands.spawn((
-                Name::new("Level"),
-                Transform::default(),
-                Visibility::default(),
-                DespawnOnExit(Screen::Gameplay),
+        Quux => {
+            commands.entity(lev_entity).insert((
                 children![
                     player(100.0, &anim_assets),
                     basic_enemy((-70., 20.).into(), &anim_assets),

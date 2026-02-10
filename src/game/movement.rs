@@ -117,7 +117,7 @@ fn apply_player_throw(
         let direction = Dir2::new(dir_not_norm.normalize()).expect("It is not normalized");
 
         commands.spawn(
-            basic_projectile(xy, direction, &anim_assets),
+            basic_projectile(xy, direction, PLAYER_COLLIDER_RADIUS, &anim_assets),
         );        
     }
 }

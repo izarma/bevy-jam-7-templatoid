@@ -62,14 +62,16 @@ impl Default for Projectile {
 #[require(GameplayLifetime)]
 pub struct Source;
 
-// TODO: anim
-pub fn basic_projectile(xy: Vec2, direction: Dir2, anim_assets: &AnimationAssets) -> impl Bundle {
+/// thrower radius: radius of the thrower
+/// TODO: visual using AnimationAssets
+pub fn basic_projectile(xy: Vec2, direction: Dir2, thrower_radius: f32, anim_assets: &AnimationAssets) -> impl Bundle {
     let basic_projectile_collision_radius: f32 = 2.;
     let speed: f32 = 500.0;
-    //    pr ----- | ---------- P
+    //          radius of proj             radius of thrower
+    //    pr ----------------------|---------------------------------- Thrower
     //    ^ spawned with room
     let new_xy =
-        (basic_projectile_collision_radius + PLAYER_COLLIDER_RADIUS + 1.0e-5) * direction + xy;
+        (basic_projectile_collision_radius + thrower_radius + 1.0e-5) * direction + xy;
     (
         Name::new("Basic Projectile"),
         Projectile { direction },
@@ -78,7 +80,6 @@ pub fn basic_projectile(xy: Vec2, direction: Dir2, anim_assets: &AnimationAssets
         //Sprite::default(),
         ScreenWrap,
         LockedAxes::new().lock_rotation(), // To be resolved with later kinematic solution
-        //Transform::from_xyz(xy.x, xy.y, PROJECTILE_Z_TRANSLATION),
         Transform::from_xyz(new_xy.x, new_xy.y, PROJECTILE_Z_TRANSLATION),
         RigidBody::Dynamic,
         GravityScale(0.0),
